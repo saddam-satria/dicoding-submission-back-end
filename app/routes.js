@@ -25,6 +25,18 @@ const Routes = (server) => {
     path: '/books/{id}',
     handler: bookController.book,
   });
+
+  server.route({
+    method: 'PUT',
+    path: '/books/{id}',
+    handler: bookController.update,
+  });
+
+  server.route({
+    method: 'DELETE',
+    path: '/books/{id}',
+    handler: bookController.delete,
+  });
 };
 
 export default Routes;

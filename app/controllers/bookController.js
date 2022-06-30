@@ -23,14 +23,14 @@ const insertBook = (request, handler) => {
   const payload = {
     id: nanoid(),
     name,
-    year: year ? year : null,
-    author: author ? author : null,
-    summary: summary ? summary : null,
-    publisher: publisher ? publisher : null,
-    pageCount: pageCount ? pageCount : null,
-    readPage: readPage ? readPage : null,
+    year: year ? year : '1992',
+    author: author ? author : '',
+    summary: summary ? summary : '',
+    publisher: publisher ? publisher : '',
+    pageCount: pageCount ? pageCount : 0,
+    readPage: readPage ? readPage : 0,
     finished: pageCount === readPage ? true : false,
-    reading: reading ? reading : null,
+    reading: reading != undefined ? reading : false,
     insertedAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
@@ -81,10 +81,69 @@ const getBook = (request, handler) => {
   return handler.response(response).code(200);
 };
 
+const updateBook = (request, handler) => {
+  const response = {
+    status: 'success',
+    message: 'Buku berhasil diperbarui',
+  };
+  const { name, year, author, summary, publisher, pageCount, readPage, reading } = request.payload;
+
+  if (!name || !author || readPage > pageCount) {
+    response.status = 'fail';
+    response.message = readPage > pageCount ? 'Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount' : !name ? 'Gagal memperbarui buku. Mohon isi nama buku' : 'Gagal memperbarui buku. Mohon isi author buku';
+    return handler.response(response).code(400);
+  }
+
+  const payload = {
+    name,
+    year: year ? year : '1992',
+    author: author ? author : '',
+    summary: summary ? summary : '',
+    publisher: publisher ? publisher : '',
+    pageCount: pageCount ? pageCount : 0,
+    readPage: readPage ? readPage : 0,
+    finished: pageCount === readPage ? true : false,
+    reading: reading != undefined ? reading : false,
+    updatedAt: new Date().toISOString(),
+  };
+
+  const updatedBook = bookModel.update(request.params.id, payload);
+
+  if (!updatedBook) {
+    response.status = 'fail';
+    response.message = 'Gagal memperbarui buku. Id tidak ditemukan';
+    return handler.response(response).code(404);
+  }
+
+  return handler.response(response).code(200);
+};
+
+const deleteBook = (request, handler) => {
+  const id = request.params.id;
+  const response = {
+    status: 'success',
+    message: 'Buku berhasil dihapus',
+  };
+
+  const book = bookModel.getByID(id);
+
+  if (!book) {
+    response.status = 'fail';
+    response.message = 'Buku gagal dihapus. Id tidak ditemukan';
+    return handler.response(response).code(404);
+  }
+
+  bookModel.delete(id);
+
+  return handler.response(response).code(200);
+};
+
 const bookController = {
   create: insertBook,
   books: getBooks,
   book: getBook,
+  update: updateBook,
+  delete: deleteBook,
 };
 
 export default bookController;
