@@ -44,18 +44,66 @@ const insertBook = (request, handler) => {
   return handler.response(response).code(201);
 };
 
-const getBooks = (_request, handler) => {
+const getBooks = (request, handler) => {
+  const { reading, finished, name } = request.query;
   const response = {
     status: 'success',
     data: {
       books: [],
     },
   };
+
+  if (reading) {
+    const books = bookModel.getByReading(reading === '1');
+
+    response.data.books = books.map((item) => {
+      return {
+        id: item.id,
+        name: item.name,
+        publisher: item.publisher,
+      };
+    });
+
+    return handler.response(response).code(200);
+  }
+
+  if (finished) {
+    const books = bookModel.getByFinished(finished === '1');
+
+    response.data.books = books.map((item) => {
+      return {
+        id: item.id,
+        name: item.name,
+        publisher: item.publisher,
+      };
+    });
+
+    return handler.response(response).code(200);
+  }
+
+  if (name) {
+    const books = bookModel.getByName(name);
+
+    response.data.books = books.map((item) => {
+      return {
+        id: item.id,
+        name: item.name,
+        publisher: item.publisher,
+      };
+    });
+
+    return handler.response(response).code(200);
+  }
+
   const books = bookModel.all();
 
   if (books.length > 0) {
-    response.data.books = books.map((book) => {
-      return { id: book.id, name: book.name, publisher: book.publisher };
+    response.data.books = books.map((item) => {
+      return {
+        id: item.id,
+        name: item.name,
+        publisher: item.publisher,
+      };
     });
   }
 
