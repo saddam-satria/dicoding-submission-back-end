@@ -4,13 +4,13 @@ import Book from '../models/Book.js';
 const bookModel = new Book();
 
 const messageHandler = ({ name }) => {
-  return `Gagal menambahkan buku. Mohon isi ${!name ? 'name' : 'author'} buku`;
+  return `Gagal menambahkan buku. Mohon isi ${!name ? 'nama' : 'author'} buku`;
 };
 
 const insertBook = (request, handler) => {
   const response = {
     status: 'success',
-    message: 'buku berhasil ditambahkan',
+    message: 'Buku berhasil ditambahkan',
   };
   const { name, year, author, summary, publisher, pageCount, readPage, reading } = request.payload;
 
@@ -76,7 +76,7 @@ const getBook = (request, handler) => {
   }
 
   response.status = 'success';
-  response.data = book;
+  response.data = { book };
 
   return handler.response(response).code(200);
 };
