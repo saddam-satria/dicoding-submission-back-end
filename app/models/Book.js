@@ -9,7 +9,7 @@ class Book extends Model {
     return this.model.filter((item) => item.finished === finished);
   }
   getByName(name) {
-    return this.model.filter((item) => item.name.includes(name));
+    return this.model.filter((item) => item.name.includes(name.toLowerCase()));
   }
 }
 

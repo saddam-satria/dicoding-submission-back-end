@@ -1,8 +1,10 @@
 import Hapi from '@hapi/hapi';
 import Routes from './app/routes.js';
+import dotenv from 'dotenv'
 
 (async () => {
-  const PORT = process.env.PORT || 5000;
+  dotenv.config()
+  const PORT = process.env.PORT || 9000;
 
   const server = Hapi.server({
     port: PORT,

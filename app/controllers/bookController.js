@@ -35,7 +35,6 @@ const insertBook = (request, handler) => {
     updatedAt: new Date().toISOString(),
   };
 
-  // TODO insert buku
   bookModel.create(payload);
 
   response.data = {
@@ -56,43 +55,58 @@ const getBooks = (request, handler) => {
   if (reading) {
     const books = bookModel.getByReading(reading === '1');
 
-    response.data.books = books.map((item) => {
-      return {
-        id: item.id,
-        name: item.name,
-        publisher: item.publisher,
-      };
-    });
+    if (books.length > 0) {
+      response.data.books = books.map((item) => {
+        return {
+          id: item.id,
+          name: item.name,
+          publisher: item.publisher,
+        };
+      });
 
-    return handler.response(response).code(200);
+      return handler.response(response).code(200);
+    }
+
+    response.status = "error"
+    return handler.response(response).code(404);
+
   }
 
   if (finished) {
     const books = bookModel.getByFinished(finished === '1');
 
-    response.data.books = books.map((item) => {
-      return {
-        id: item.id,
-        name: item.name,
-        publisher: item.publisher,
-      };
-    });
+    if (books.length > 0) {
+      response.data.books = books.map((item) => {
+        return {
+          id: item.id,
+          name: item.name,
+          publisher: item.publisher,
+        };
+      });
 
-    return handler.response(response).code(200);
+      return handler.response(response).code(200);
+    }
+    response.status = "error"
+    return handler.response(response).code(404);
+
   }
 
   if (name) {
     const books = bookModel.getByName(name);
+    if (books.length > 0) {
+      response.data.books = books.map((item) => {
+        return {
+          id: item.id,
+          name: item.name,
+          publisher: item.publisher,
+        };
+      });
+      return handler.response(response).code(200);
+    }
+    response.status = "error"
 
-    response.data.books = books.map((item) => {
-      return {
-        id: item.id,
-        name: item.name,
-        publisher: item.publisher,
-      };
-    });
+    return handler.response(response).code(404);
 
-    return handler.response(response).code(200);
   }
 
   const books = bookModel.all();
